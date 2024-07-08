@@ -46,27 +46,39 @@ class SiteFooter extends React.Component {
     return (
       <footer
         role="contentinfo"
-        className="footer d-flex border-top py-3 px-4"
+        className="custom-footer footer"
       >
-        <div className="container-fluid d-flex">
-          <a
-            className="d-block"
-            href={config.LMS_BASE_URL}
-            aria-label={intl.formatMessage(messages['footer.logo.ariaLabel'])}
-          >
-            <img
-              style={{ maxHeight: 45 }}
-              src={logo || config.LOGO_TRADEMARK_URL}
-              alt={intl.formatMessage(messages['footer.logo.altText'])}
-            />
-          </a>
-          <div className="flex-grow-1" />
-          {showLanguageSelector && (
-            <LanguageSelector
-              options={supportedLanguages}
-              onSubmit={onLanguageSelected}
-            />
-          )}
+        <div>
+          <nav class="nav-colophon" aria-label="About">
+            <ol>
+              <li class="nav-colophon-01">
+                <a id="about" href="/about">About</a>
+              </li>
+              <li class="nav-colophon-03">
+                <a id="contact" href="/support/contact_us">Contact</a>
+              </li>
+            </ol>
+          </nav>
+
+          <p class="copyright">
+              © The University of Queensland
+          </p>
+          
+          <nav class="nav-legal" aria-label="Legal">
+            <ul>
+              <li class="nav-legal-01">
+                <a href="/tos_and_honor">Terms of Service &amp; Honor Code</a>
+              </li>
+              <li class="nav-legal-02">
+                <a href="/privacy">Privacy Policy</a>
+              </li>
+            </ul>
+          </nav>
+          <div class="nav-legal-cricos">
+            <abbr title="Australian Business Number">ABN</abbr>: 63 942 912 684
+            &nbsp; | &nbsp;
+            <abbr title="Commonwealth Register of Institutions and Courses for Overseas Students">CRICOS</abbr> Provider No: 00025B
+          </div>
         </div>
       </footer>
     );
