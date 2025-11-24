@@ -1,11 +1,14 @@
 /* eslint-disable react/prop-types */
 import React, { useMemo } from 'react';
 import renderer from 'react-test-renderer';
-import { mount } from 'enzyme';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppContext } from '@edx/frontend-platform/react';
 
 import Footer from './Footer';
+import FooterSlot from '../plugin-slots/FooterSlot';
+import StudioFooterHelpSectionSlot from '../plugin-slots/StudioFooterHelpSectionSlot';
 
 const FooterWithContext = ({ locale = 'es' }) => {
   const contextValue = useMemo(() => ({
@@ -21,7 +24,7 @@ const FooterWithContext = ({ locale = 'es' }) => {
       <AppContext.Provider
         value={contextValue}
       >
-        <Footer />
+        <FooterSlot />
       </AppContext.Provider>
     </IntlProvider>
   );
@@ -76,21 +79,44 @@ describe('<Footer />', () => {
   });
 
   describe('handles language switching', () => {
-    it('calls onLanguageSelected prop when a language is changed', () => {
+    it('calls onLanguageSelected prop when a language is changed', async () => {
+      const user = userEvent.setup();
       const mockHandleLanguageSelected = jest.fn();
-      const wrapper = mount(<FooterWithLanguageSelector languageSelected={mockHandleLanguageSelected} />);
+      render(<FooterWithLanguageSelector languageSelected={mockHandleLanguageSelected} />);
 
-      wrapper.find('form').simulate('submit', {
-        target: {
-          elements: {
-            'site-footer-language-select': {
-              value: 'es',
-            },
-          },
-        },
-      });
+      await user.selectOptions(screen.getByRole('combobox'), 'es');
+      await user.click(screen.getByTestId('site-footer-submit-btn'));
 
       expect(mockHandleLanguageSelected).toHaveBeenCalledWith('es');
     });
+  });
+});
+
+describe('<StudioFooterHelpSectionSlot />', () => {
+  const SectionWithContext = ({ locale = 'es' }) => {
+    const contextValue = useMemo(() => ({
+      authenticatedUser: null,
+      config: {
+        LOGO_TRADEMARK_URL: process.env.LOGO_TRADEMARK_URL,
+        LMS_BASE_URL: process.env.LMS_BASE_URL,
+      },
+    }), []);
+
+    return (
+      <IntlProvider locale={locale}>
+        <AppContext.Provider
+          value={contextValue}
+        >
+          <StudioFooterHelpSectionSlot />
+        </AppContext.Provider>
+      </IntlProvider>
+    );
+  };
+
+  it('renders correctly', () => {
+    const tree = renderer
+      .create(<SectionWithContext />)
+      .toJSON();
+    expect(tree).toMatchSnapshot();
   });
 });

@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { sendTrackEvent } from '@edx/frontend-platform/analytics';
-import { ensureConfig } from '@edx/frontend-platform/config';
+import { ensureConfig } from '@edx/frontend-platform';
 import { AppContext } from '@edx/frontend-platform/react';
 
 import messages from './Footer.messages';
@@ -17,13 +17,17 @@ const EVENT_NAMES = {
   FOOTER_LINK: 'edx.bi.footer.link',
 };
 
-class SiteFooter extends React.Component {
-  constructor(props) {
-    super(props);
-    this.externalLinkClickHandler = this.externalLinkClickHandler.bind(this);
-  }
+const SiteFooter = ({
+  supportedLanguages,
+  onLanguageSelected,
+  logo,
+}) => {
+  const intl = useIntl();
+  const { config } = useContext(AppContext);
 
-  externalLinkClickHandler(event) {
+  const showLanguageSelector = supportedLanguages.length > 0 && onLanguageSelected;
+
+  const externalLinkClickHandler = (event) => {
     const label = event.currentTarget.getAttribute('href');
     const eventName = EVENT_NAMES.FOOTER_LINK;
     const properties = {
@@ -31,7 +35,7 @@ class SiteFooter extends React.Component {
       label,
     };
     sendTrackEvent(eventName, properties);
-  }
+  };
 
   render() {
     const {
@@ -88,7 +92,6 @@ class SiteFooter extends React.Component {
 SiteFooter.contextType = AppContext;
 
 SiteFooter.propTypes = {
-  intl: intlShape.isRequired,
   logo: PropTypes.string,
   onLanguageSelected: PropTypes.func,
   supportedLanguages: PropTypes.arrayOf(PropTypes.shape({
@@ -103,5 +106,5 @@ SiteFooter.defaultProps = {
   supportedLanguages: [],
 };
 
-export default injectIntl(SiteFooter);
+export default SiteFooter;
 export { EVENT_NAMES };
