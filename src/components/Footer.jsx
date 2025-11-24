@@ -17,11 +17,7 @@ const EVENT_NAMES = {
   FOOTER_LINK: 'edx.bi.footer.link',
 };
 
-const SiteFooter = ({
-  supportedLanguages,
-  onLanguageSelected,
-  logo,
-}) => {
+const SiteFooter = ({ supportedLanguages, onLanguageSelected, logo }) => {
   const intl = useIntl();
   const { config } = useContext(AppContext);
 
@@ -29,67 +25,50 @@ const SiteFooter = ({
 
   const externalLinkClickHandler = (event) => {
     const label = event.currentTarget.getAttribute('href');
-    const eventName = EVENT_NAMES.FOOTER_LINK;
-    const properties = {
+    sendTrackEvent(EVENT_NAMES.FOOTER_LINK, {
       category: 'outbound_link',
       label,
-    };
-    sendTrackEvent(eventName, properties);
+    });
   };
 
-  render() {
-    const {
-      supportedLanguages,
-      onLanguageSelected,
-      logo,
-      intl,
-    } = this.props;
-    const showLanguageSelector = supportedLanguages.length > 0 && onLanguageSelected;
-    const { config } = this.context;
+  return (
+    <footer role="contentinfo" className="custom-footer footer">
+      <div>
+        <nav className="nav-colophon" aria-label="About">
+          <ol>
+            <li className="nav-colophon-01">
+              <a id="about" href="/about">About</a>
+            </li>
+            <li className="nav-colophon-03">
+              <a id="contact" href="/support/contact_us">Contact</a>
+            </li>
+          </ol>
+        </nav>
 
-    return (
-      <footer
-        role="contentinfo"
-        className="custom-footer footer"
-      >
-        <div>
-          <nav class="nav-colophon" aria-label="About">
-            <ol>
-              <li class="nav-colophon-01">
-                <a id="about" href="/about">About</a>
-              </li>
-              <li class="nav-colophon-03">
-                <a id="contact" href="/support/contact_us">Contact</a>
-              </li>
-            </ol>
-          </nav>
+        <p className="copyright">
+          © The University of Queensland
+        </p>
 
-          <p class="copyright">
-              © The University of Queensland
-          </p>
-          
-          <nav class="nav-legal" aria-label="Legal">
-            <ul>
-              <li class="nav-legal-01">
-                <a href="/tos_and_honor">Terms of Service &amp; Honor Code</a>
-              </li>
-              <li class="nav-legal-02">
-                <a href="/privacy">Privacy Policy</a>
-              </li>
-            </ul>
-          </nav>
-          <div class="nav-legal-cricos">
-            <abbr title="Australian Business Number">ABN</abbr>: 63 942 912 684
-            &nbsp; | &nbsp;
-            <abbr title="Commonwealth Register of Institutions and Courses for Overseas Students">CRICOS</abbr> Provider No: 00025B
-          </div>
+        <nav className="nav-legal" aria-label="Legal">
+          <ul>
+            <li className="nav-legal-01">
+              <a href="/tos_and_honor">Terms of Service &amp; Honor Code</a>
+            </li>
+            <li className="nav-legal-02">
+              <a href="/privacy">Privacy Policy</a>
+            </li>
+          </ul>
+        </nav>
+
+        <div className="nav-legal-cricos">
+          <abbr title="Australian Business Number">ABN</abbr>: 63 942 912 684
+          &nbsp; | &nbsp;
+          <abbr title="Commonwealth Register of Institutions and Courses for Overseas Students">CRICOS</abbr> Provider No: 00025B
         </div>
-      </footer>
-    );
-  }
-}
-
-SiteFooter.contextType = AppContext;
+      </div>
+    </footer>
+  );
+};
 
 SiteFooter.propTypes = {
   logo: PropTypes.string,
